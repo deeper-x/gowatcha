@@ -35,4 +35,4 @@ Parameters:
 2. handle configuration settings
 
 
-![schema](https://ibb.co/rszZ2qz)
+![schema](https://i.ibb.co/2NCj3RC/Screenshot-from-2021-07-22-20-31-06.png)
