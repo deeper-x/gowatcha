@@ -1,3 +1,3 @@
 package emailer
 
-// TODO
+// no test on email sending
