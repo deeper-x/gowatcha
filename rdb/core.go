@@ -3,7 +3,6 @@ package rdb
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -29,8 +28,8 @@ func New() RDB {
 	}
 }
 
-// GetOffset return offset
-func (r RDB) GetOffset(inst string) (int64, error) {
+// ROffset return offset
+func (r RDB) ROffset(inst string) (int64, error) {
 	// start reading from offset
 	offs, err := r.cli.Get(r.Ctx, inst).Int64()
 
@@ -44,8 +43,8 @@ func (r RDB) GetOffset(inst string) (int64, error) {
 	return offs, nil
 }
 
-// SetOffSet write offset
-func (r RDB) SetOffSet(inst string, size int64) (bool, error) {
+// WOffSet write offset
+func (r RDB) WOffSet(inst string, size int64) (bool, error) {
 	if err := r.cli.Set(r.Ctx, inst, size, 0).Err(); err != nil {
 		return false, err
 	}
@@ -53,19 +52,17 @@ func (r RDB) SetOffSet(inst string, size int64) (bool, error) {
 	return true, nil
 }
 
-// WriteLastSent write last sent timestamp to given recipient
-func (r RDB) WriteLastSent(email string) (bool, error) {
-	now := time.Now().Unix()
-
-	if err := r.cli.Set(r.Ctx, email, now, 0).Err(); err != nil {
+// WLastSent write last sent timestamp to given recipient
+func (r RDB) WLastSent(email string, ts int64) (bool, error) {
+	if err := r.cli.Set(r.Ctx, email, ts, 0).Err(); err != nil {
 		return false, err
 	}
 
 	return true, nil
 }
 
-// GetLastSent return unix timestamp
-func (r RDB) GetLastSent(email string) (int64, error) {
+// RLastSent return unix timestamp
+func (r RDB) RLastSent(email string) (int64, error) {
 	ux, err := r.cli.Get(r.Ctx, email).Int64()
 
 	if err != nil {

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/zreq3b/gowatcha/emailer"
@@ -13,23 +15,34 @@ import (
 )
 
 func main() {
-	// instance name - #todo: handle cli args
-	inst := os.Args[1]
 	// path file to be logged - #todo: handle cli args
-	path := os.Args[2]
+	lpath := os.Args[1]
 	// recipient, email message - #todo: handle cli args
-	rcpt := os.Args[3]
+	rcpt := os.Args[2]
 	//  occurrence we are searching for - #todo: handle cli args
-	needle := os.Args[4]
+	needle := os.Args[3]
 
-	// Starting message
-	fmt.Println(settings.MOTD)
+	path := path.Base(lpath)
+	muser := strings.Split(rcpt, "@")[0]
+	inst := fmt.Sprintf("%v_%v", muser, path)
+
+	// redis connection
+	rdb := rdb.New()
+
+	// preparing database keys:
+	// 1. preparing last known offset, zero
+	_, err := rdb.WOffSet(inst, 0)
+	if err != nil {
+		log.Panic(err)
+	}
+	// 2. preparing last sent, never
+	rdb.WLastSent(rcpt, 0)
 
 	func() {
 		// check logs every 10 secs
 		for range time.Tick(settings.CHECKINTERVAL) {
 			// build file instance
-			lw, err := lwatch.New(path)
+			lw, err := lwatch.New(lpath)
 			if err != nil {
 				log.Panic(err)
 			}
@@ -40,11 +53,8 @@ func main() {
 				log.Panic(err)
 			}
 
-			// redis connection
-			rdb := rdb.New()
-
 			// reading last known offset
-			offs, err := rdb.GetOffset(inst)
+			offs, err := rdb.ROffset(inst)
 			if err != nil {
 				log.Panic(err)
 			}
@@ -65,7 +75,7 @@ func main() {
 				}
 
 				// step 3: define new offset, with current file size
-				_, err = rdb.SetOffSet(inst, size)
+				_, err = rdb.WOffSet(inst, size)
 				if err != nil {
 					log.Panic(err)
 				}
@@ -73,7 +83,7 @@ func main() {
 				// step 4: search for string occurrence
 				if lw.NeedleExists(needle, out) {
 					// step 4a: send email if found
-					ls, err := rdb.GetLastSent(rcpt)
+					ls, err := rdb.RLastSent(rcpt)
 					if err != nil {
 						log.Panic(err)
 					}
@@ -86,7 +96,8 @@ func main() {
 
 					// step 4c: if notification sent, update last sending TS
 					if ok {
-						rdb.WriteLastSent(rcpt)
+						now := time.Now().Unix()
+						rdb.WLastSent(rcpt, now)
 					}
 				}
 			}
