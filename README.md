@@ -1,4 +1,6 @@
 # gowatcha
+[![Go](https://github.com/zreq3b/gowatcha/actions/workflows/go.yml/badge.svg)](https://github.com/zreq3b/gowatcha/actions/workflows/go.yml)
+
 [WIP]
 
 File log watcher. Search for needle/occurrence, sending email notification when found.
