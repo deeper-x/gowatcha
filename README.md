@@ -8,10 +8,10 @@ Usage:
 ```bash
 $ export USER=<EMAIL> 
 $ export PASSWD=<PASSWORD> 
-$ go run main.go <INSTANCE_ID> <LOG_PATH> <RECIPIENT> <NEEDLE>
+$ go run main.go <LOG_PATH> <RECIPIENT> <NEEDLE>
 
 # example:
-# zreq3b@SF314-59  (master)$ go run main.go foo /home/zreq3b/go/src/github.com/zreq3b/gowatcha/assets/demo.txt sviluppo@myskin.it 123
+# zreq3b@SF314-59  (master)$ go run main.go /home/zreq3b/go/src/github.com/zreq3b/gowatcha/assets/demo.txt sviluppo@myskin.it 123
 
 Starting...
    __________ _       _____  ______________  _____ 
@@ -25,7 +25,6 @@ Starting...
 ```
 
 Parameters:
-- [ ] INSTANCE_ID: each running instance must have a unique identifier, in order to monitor different logs concurrently
 - [ ] LOG_PATH: absolute path to log file
 - [ ] RECIPIENT: is the email to notify
 - [ ] NEEDLE: the string occurrence we have to search
