@@ -1,5 +1,5 @@
 # gowatcha
-[![Go](https://github.com/zreq3b/gowatcha/actions/workflows/go.yml/badge.svg)](https://github.com/zreq3b/gowatcha/actions/workflows/go.yml)
+[![Go](https://github.com/deeper-x/gowatcha/actions/workflows/go.yml/badge.svg)](https://github.com/deeper-x/gowatcha/actions/workflows/go.yml)
 
 [WIP]
 
